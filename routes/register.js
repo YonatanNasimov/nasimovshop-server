@@ -31,21 +31,17 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async(req, res) => {
     let validBody = validLogin(req.body);
     if (validBody.error) {
-        // .details -> מחזיר בפירוט מה הבעיה צד לקוח
         return res.status(400).json(validBody.error.details);
     }
     try {
-        // קודם כל לבדוק אם המייל שנשלח קיים  במסד
         let user = await UserModel.findOne({ username: req.body.username })
         if (!user) {
             return res.status(401).json({ msg: "Password or username is worng ,code:1" })
         }
-        // אם הסיסמא שנשלחה בבאדי מתאימה לסיסמא המוצפנת במסד של אותו משתמש
         let authPassword = await bcrypt.compare(req.body.password, user.password);
         if (!authPassword) {
             return res.status(401).json({ msg: "Password or username is worng ,code:2" });
         }
-        // מייצרים טוקן לפי שמכיל את האיידי של המשתמש
         let token = createToken(user._id, user.role);
         res.status(200).json({ token, user ,userName: user.name });
     } catch (err) {

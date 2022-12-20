@@ -3,7 +3,6 @@ const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const { config } = require("../config/secret")
 
-// unique: true username לא לשכוח
 const userSchema = new mongoose.Schema({
     username: String,
     email: String,
